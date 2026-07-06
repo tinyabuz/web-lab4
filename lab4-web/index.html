@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>LR4 — Веб форма + REST API</title>
+</head>
+<body>
+    <h1>Лабораторна робота №4</h1>
+    <h2>Веб форма з перевіркою даних та відправкою на сервер</h2>
+
+    <form id="contactForm">
+        <label>Ім'я:</label><br>
+        <input type="text" id="name" required><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="email" required><br><br>
+
+        <label>Повідомлення:</label><br>
+        <textarea id="message" required></textarea><br><br>
+
+        <button type="submit">Відправити</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+        const form = document.getElementById('contactForm');
+        const result = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+
+        if (!name!message) {
+        result.textContent = 'Будь ласка, заповніть всі поля.';
+        result.style.color = 'red';
+        return;
+        }
+
+        try {
+        const response = await fetch('http://localhost:3000/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+        });
+
+        const data = await response.json();
+        result.textContent = data.message;
+        result.style.color = 'green';
+        } catch (err) {
+        result.textContent = 'Помилка при відправці даних.';
+        result.style.color = 'red';
+        }
+        });
+    </script>
+</body>
+</html>
